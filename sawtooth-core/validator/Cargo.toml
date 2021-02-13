@@ -1,0 +1,38 @@
+[package]
+name = "sawtooth_validator"
+version = "1.3.0"
+authors = ["Intel Corporation"]
+
+[dependencies]
+clap = "2"
+cpython = "0.2"
+hex = "0.3"
+lazy_static = "1.0"
+log = { version = "0.4", features = ["std"] }
+libc = ">=0.2.35"
+protobuf = "2.0"
+python3-sys = "0.2"
+sawtooth = { path = "../libsawtooth", features = ["validator-internals"] }
+uluru = "0.2.0"
+
+[build-dependencies]
+protoc-rust = "2.0"
+glob = "0.2"
+
+[lib]
+crate-type = ["dylib"]
+
+[[bin]]
+name = "sawtooth-validator"
+path = "src/main.rs"
+
+[features]
+default = []
+
+stable = []
+
+experimental = [
+    # The experimental feature extends stable:
+    "stable",
+    # The following features are experimental:
+]

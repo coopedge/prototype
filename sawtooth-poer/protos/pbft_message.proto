@@ -1,0 +1,75 @@
+// Copyright 2018 Bitwise IO, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// -----------------------------------------------------------------------------
+
+syntax = "proto3";
+
+// Represents all common information used in a PBFT message
+message PbftMessageInfo {
+  // Type of the message
+  string msg_type = 1;
+
+  // View number
+  uint64 view = 2;
+
+  // Sequence number
+  uint64 seq_num = 3;
+
+  // Node who signed the message
+  bytes signer_id = 4;
+}
+
+
+// A generic PBFT message (PrePrepare, Prepare, Commit, ViewChange, SealRequest)
+message PbftMessage {
+  // Message information
+  PbftMessageInfo info = 1;
+
+  // The block this message is for
+  bytes block_id = 2;
+}
+
+// A message sent by the new primary to signify that the new view should be
+// started
+message PbftNewView {
+  // Message information
+  PbftMessageInfo info = 1;
+
+  // A list of ViewChange messages to prove this view change (must contain at
+  // least 2f messages)
+  repeated PbftSignedVote view_changes = 2;
+}
+
+message PbftSignedVote {
+  // Serialized ConsensusPeerMessage header
+  bytes header_bytes = 1;
+
+  // Signature of the serialized ConsensusPeerMessageHeader
+  bytes header_signature = 2;
+
+  // Serialized PBFT message
+  bytes message_bytes = 3;
+}
+
+message PbftSeal {
+  // Message information
+  PbftMessageInfo info = 1;
+
+  // ID of the block this seal verifies
+  bytes block_id = 2;
+
+  // A list of Commit votes to prove the block commit (must contain at least 2f
+  // votes)
+  repeated PbftSignedVote commit_votes = 3;
+}
